@@ -3,7 +3,7 @@ Name:			Cody Walls
 EUID:			cgw0081
 Course:			CSCE 2110.002
 Date Created:	12/2/2021
-Description:	This program holds the pilot.cpp info 
+Description:	This program holds the flightLegInstance.cpp info 
 */
 
 #include <iostream>
@@ -21,16 +21,16 @@ class HashT{
 		static const int tableSize = 23;
 		struct item{
 			//will be making the FLNO the key and the other items the value
-			string id, name, datehired;
+			string seq, flno, fDate, actDept, actArr, plane;
 			item* next;
 		};
 		item* HashTable[tableSize];
 	public:
 		HashT();
-		int HashFunction(string id);
-		void addItem(string id, string name, string namehired);
-		void searchItem(string id);
-		void deleteItem(string id);
+		int HashFunction(string seq);
+		void addItem(string seq, string flno, string fDate, string actDept, string actArr, string pilot);
+		void searchItem(string seq);
+		void deleteItem(string seq);
 		void printTable();
 };
 HashT:: HashT(){
@@ -38,44 +38,44 @@ HashT:: HashT(){
 	//sets all the values in the struct to null or empty
 	for(int i = 0; i < tableSize; i++){
 		HashTable[i] = new item;
-		HashTable[i]->id = "empty";
-		HashTable[i]->name = "empty";
-		HashTable[i]->datehired = "empty";
-		
-		
-		
+		HashTable[i]->seq = "empty";
+		HashTable[i]->flno = "empty";
+		HashTable[i]->fDate = "empty";
+		HashTable[i]->actDept = "empty";
+		HashTable[i]->actArr = "empty";
+		HashTable[i]->plane = "empty";
 		HashTable[i]->next = NULL;
 	}
 }
-int HashT:: HashFunction(string id){
+int HashT:: HashFunction(string seq){
 	int hash = 0;
 	int index;
-	for(int i = 0; i < id.length(); i++){
-		hash = (hash + (int)id[i]) * 8;
+	for(int i = 0; i < seq.length(); i++){
+		hash = (hash + (int)seq[i]) * 8;
 	}
 	index = hash % tableSize;
 	return index;
 }
-void HashT:: addItem(string id, string name, string datehired){
-	int index = HashFunction(id);
+void HashT:: addItem(string seq, string flno, string fDate, string actDept, string actArr, string plane){
+	int index = HashFunction(seq);
 	//check if its empty
-	if(HashTable[index]->id == "empty"){
-		HashTable[index]->id = id;
-		HashTable[index]->name = name;
-		HashTable[index]->datehired = datehired;
-		
-		
-		
+	if(HashTable[index]->seq == "empty"){
+		HashTable[index]->seq = seq;
+		HashTable[index]->flno = flno;
+		HashTable[index]->fDate = fDate;
+		HashTable[index]->actDept = actDept;
+		HashTable[index]->actArr = actArr;
+		HashTable[index]->plane = plane;
 	}
 	else{
 		item* Ptr = HashTable[index];
 		item* newBucket = new item;
-		newBucket->id = id;
-		newBucket->name = name;
-		newBucket->datehired = datehired;
-		
-		
-		
+		newBucket->seq = seq;
+		newBucket->flno = flno;
+		newBucket->fDate = fDate;
+		newBucket->actDept = actDept;
+		newBucket->actArr = actArr;
+		newBucket->plane = plane;
 		HashTable[index]->next = NULL;
 		while(Ptr->next != NULL){
 			Ptr = Ptr->next;
@@ -83,81 +83,82 @@ void HashT:: addItem(string id, string name, string datehired){
 		Ptr->next = newBucket;
 	}
 }
-void HashT:: searchItem(string id){
-	int index = HashFunction(id);
-	bool foundID = false;
-	string name, datehired;
+void HashT:: searchItem(string seq){
+	int index = HashFunction(seq);
+	bool foundSeq = false;
+	string flno, fDate, actDept, actArr, plane;
 	item* Ptr = HashTable[index];
 	while(Ptr != NULL){
-		if(Ptr->id == id){
-			foundID = true;
-			name = Ptr->name;
-			datehired = Ptr->datehired;
-			
-			
-			
+		if(Ptr->seq == seq){
+			foundSeq = true;
+			flno = Ptr->flno;
+			fDate = Ptr->fDate;
+			actDept = Ptr->actDept;
+			actArr = Ptr->actArr;
+			plane = Ptr->plane;
 		}
 		Ptr = Ptr->next;
 	}
-	if(foundID == true){
-	cout << id << "[NAME] - [" << name << "] " << "[DateHired] - [" << datehired << "]" << endl;
-	
+	if(foundSeq == true){
+	cout << seq << "[FLNO] - [" << flno << "] " << "[fDate] - [" << fDate << "] " << "[actDept] - [" << actDept << "] ";
+	cout << "[actArr] - [" << actArr << "] " << "[plane] - [" << plane << endl;
 	}
 	else{
-		cout << "No information for [" << id << "]" << endl;
+		cout << "No information for [" << seq << "]" << endl;
 	}
 }
-void HashT:: deleteItem(string id){
-	int index = HashFunction(id);
+void HashT:: deleteItem(string seq){
+	int index = HashFunction(seq);
 	item* delPtr;
-	if(HashTable[index]->id == "empty"){
-		cout << id << " is not in this hash table, try another id" << endl;
+	if(HashTable[index]->seq == "empty"){
+		cout << seq << " is not in this hash table, try another flight" << endl;
 	}
-	else if(HashTable[index]->id == id){
+	else if(HashTable[index]->seq == seq){
 		delPtr = HashTable[index];
 		HashTable[index] = HashTable[index]->next;
 		delete delPtr;
-		cout << "[" << id << "] has been removed from this hash table" << endl;
+		cout << "[" << seq << "] has been removed from this hash table" << endl;
 	}
 }
 void HashT:: printTable(){
 	for (int i = 0; i < tableSize; i++){
 		cout << "Index: " << i << endl;
-		cout << HashTable[i]->id << endl;
-		cout << HashTable[i]->name << endl;
-		cout << HashTable[i]->datehired << endl;
-		
-		
+		cout << HashTable[i]->seq << endl;
+		cout << HashTable[i]->flno << endl;
+		cout << HashTable[i]->fDate << endl;
+		cout << HashTable[i]->actDept << endl;
+		cout << HashTable[i]->actArr << endl;
+		cout << HashTable[i]->plane << endl;
 	}
 }
 int main(){
 	
 	HashT hashTable;
-	string addedID;
-	string addedNAME;
-	string addedDATEHIRED;
-	
-	
-	
+	string addedSEQ;
+	string addedFLNO;
+	string addedFDATE;
+	string addedACTDEPT;
+	string addedACTARR;
+	string addedPLANE;
 	int choice;
 	string fileName;
-	string id;
-	string name;
-	string datehired;
-	
-	
-	
-	vector<string> IDV;
-	vector<string> NAMEV;
-	vector<string> DATEHIREDV;
-	
-	
-	
-	string removedID;
-	string searchedID;
+	string seq;
+	string flno;
+	string fdate;
+	string actdept;
+	string actarr;
+	string plane;
+	vector<string> SEQV;
+	vector<string> FLNOV;
+	vector<string> FDATEV;
+	vector<string> ACTDEPTV;
+	vector<string> ACTARRV;
+	vector<string> PLANEV;
+	string removedSEQ;
+	string searchedSEQ;
 	int lines;
 	
-	fileName = "DATA_Pilot.CSV";
+	fileName = "DATA_FlightLegInstance.CSV";
 	ifstream theFile(fileName);
 	
 	if(theFile.is_open()){
@@ -169,18 +170,18 @@ int main(){
 		while(!theFile.eof()){
 			if(theFile.eof()) break;
 			else{
-				getline(theFile, id, ',');
-				IDV.push_back(id);
-				getline(theFile, name, ',');
-				NAMEV.push_back(name);
-				getline(theFile, datehired, '\n');
-				DATEHIREDV.push_back(datehired);
-				
-				
-				
-				
-				
-				
+				getline(theFile, seq, ',');
+				SEQV.push_back(seq);
+				getline(theFile, flno, ',');
+				FLNOV.push_back(flno);
+				getline(theFile, fdate, ',');
+				FDATEV.push_back(fdate);
+				getline(theFile, actdept, ',');
+				ACTDEPTV.push_back(actdept);
+				getline(theFile, actarr, ',');
+				ACTARRV.push_back(actarr);
+				getline(theFile, plane, '\n');
+				PLANEV.push_back(plane);
 				lines += 1;
 			}
 		}
@@ -191,56 +192,57 @@ int main(){
 	}
 	/*
 	for(int i = 0; i < 14; i++){
-		hashTable.addItem(IDV[i], NAMEV[i], DATEHIREDV[i]);
+		hashTable.addItem(SEQV[i], FLNOV[i], FDATEV[i], ACTDEPTV[i], ACTARRV[i], PLANEV[i]);
 	}
 	*/
 	/*
 	do{
 		cout << endl;
-		cout << "1 - add ID" << endl;
-		cout << "2 - remove ID" << endl;
-		cout << "3 - search ID" << endl;
+		cout << "1 - add flight" << endl;
+		cout << "2 - remove flight" << endl;
+		cout << "3 - search flight" << endl;
 		cout << "4 - print table" << endl;
 		cout << "5 - exit" << endl;
 		cin >> choice;
 		
 		switch(choice){
 			case 1:
-				cout << "[ADD ID]" << endl;
+				cout << "[ADD FLIGHT]" << endl;
 				cin.ignore();
-				getline(cin,addedID);
-				cout << "[ADD NAME]" << endl;
+				getline(cin,addedFLNO);
+				cout << "[ADD SEQ]" << endl;
 				cin.ignore();
-				getline(cin,addedNAME);
-				cout << "[ADD DateHired]" << endl;
+				getline(cin,addedSeq);
+				cout << "[ADD FROMA]" << endl;
 				cin.ignore();
-				getline(cin, addedDATEHIRED);
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+				getline(cin, addedFromA);
+				cout << "[ADD TOA]" << endl;
+				cin.ignore();
+				getline(cin, addedToA);
+				cout << "[ADD DEPTTIME]" << endl;
+				cin.ignore();
+				getline(cin, addedDeptTime);
+				cout << "[ADD ARRTIME]" << endl;
+				cin.ignore();
+				getline(cin, addedArrTime);
+				cout << "[ADD PLANE]" << endl;
+				cin.ignore();
+				getline(cin, addedPlane);
 				cout << "Added new flight information" << endl;
-				hashTable.addItem(addedID, addedNAME, addedDATEHIRED);
+				hashTable.addItem(addedFLNO, addedSeq, addedFromA, addedToA, addedDeptTime, addedArrTime, addedPlane);
 				break;
 			case 2:
-				cout << "[REMOVE ID]" << endl;
+				cout << "[REMOVE FLIGHT]" << endl;
 				cin.ignore();
-				getline(cin, removedID);
-				cout << "id has been removed" << endl;
-				hashTable.deleteItem(removedID);
+				getline(cin, removedFlight);
+				cout << "Flight has been removed" << endl;
+				hashTable.deleteItem(removedFlight);
 				break;
 			case 3:
-				cout << "[SEARCH ID]" << endl;
+				cout << "[SEARCH FLIGHT]" << endl;
 				cin.ignore();
-				getline(cin, searchedID);
-				hashTable.searchItem(searchedID);
+				getline(cin, searchedFlight);
+				hashTable.searchItem(searchedFlight);
 				break;
 			case 4:
 				cout << "[PRINT TABLE]" << endl;
@@ -256,13 +258,14 @@ int main(){
 	*/
 	
 	cout << "File Name: sample_data/" << fileName << endl;
-	cout << "Insert Content: ['ID', 'NAME', 'DATEHIRED']" << endl;
-	cout << "id" << " " << "name" << " " << "date hired" << endl;
-	for(int i = 0; i < 8; i++){
-		hashTable.addItem(IDV[i], NAMEV[i], DATEHIREDV[i]);
-		cout << IDV[i] << " " << NAMEV[i] << " " << DATEHIREDV[i] << endl;
+	cout << "Insert Content: ['SEQ', 'FLNO', 'FDATE', 'ACTDEPT', 'ACTARR', 'PLANE']" << endl;
+	cout << "Seq" << " " << "FLNO" << " " << "fDate" << " " << "actDept" << " " << "actArr" << " " << "Plane" << endl;
+	for(int i = 0; i < 14; i++){
+		hashTable.addItem(SEQV[i], FLNOV[i], FDATEV[i], ACTDEPTV[i], ACTARRV[i], PLANEV[i]);
+		cout << SEQV[i] << " " << FLNOV[i] << " " << FDATEV[i] << " " << ACTDEPTV[i] << " " << ACTARRV[i] << " " << PLANEV[i] << " " << endl;
 	}
 	
 	
 	return 0;
 }
+
