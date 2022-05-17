@@ -1,0 +1,268 @@
+/*
+Name:			Cody Walls
+EUID:			cgw0081
+Course:			CSCE 2110.002
+Date Created:	12/2/2021
+Description:	This program holds the pilot.cpp info 
+*/
+
+#include <iostream>
+#include <stdlib.h>
+#include <list>
+#include <cstring>
+#include <fstream>
+#include <iomanip>
+#include <sstream>
+#include <vector>
+using namespace std;
+
+class HashT{
+	private:
+		static const int tableSize = 23;
+		struct item{
+			//will be making the FLNO the key and the other items the value
+			string id, name, datehired;
+			item* next;
+		};
+		item* HashTable[tableSize];
+	public:
+		HashT();
+		int HashFunction(string id);
+		void addItem(string id, string name, string namehired);
+		void searchItem(string id);
+		void deleteItem(string id);
+		void printTable();
+};
+HashT:: HashT(){
+	//constructor
+	//sets all the values in the struct to null or empty
+	for(int i = 0; i < tableSize; i++){
+		HashTable[i] = new item;
+		HashTable[i]->id = "empty";
+		HashTable[i]->name = "empty";
+		HashTable[i]->datehired = "empty";
+		
+		
+		
+		HashTable[i]->next = NULL;
+	}
+}
+int HashT:: HashFunction(string id){
+	int hash = 0;
+	int index;
+	for(int i = 0; i < id.length(); i++){
+		hash = (hash + (int)id[i]) * 8;
+	}
+	index = hash % tableSize;
+	return index;
+}
+void HashT:: addItem(string id, string name, string datehired){
+	int index = HashFunction(id);
+	//check if its empty
+	if(HashTable[index]->id == "empty"){
+		HashTable[index]->id = id;
+		HashTable[index]->name = name;
+		HashTable[index]->datehired = datehired;
+		
+		
+		
+	}
+	else{
+		item* Ptr = HashTable[index];
+		item* newBucket = new item;
+		newBucket->id = id;
+		newBucket->name = name;
+		newBucket->datehired = datehired;
+		
+		
+		
+		HashTable[index]->next = NULL;
+		while(Ptr->next != NULL){
+			Ptr = Ptr->next;
+		}
+		Ptr->next = newBucket;
+	}
+}
+void HashT:: searchItem(string id){
+	int index = HashFunction(id);
+	bool foundID = false;
+	string name, datehired;
+	item* Ptr = HashTable[index];
+	while(Ptr != NULL){
+		if(Ptr->id == id){
+			foundID = true;
+			name = Ptr->name;
+			datehired = Ptr->datehired;
+			
+			
+			
+		}
+		Ptr = Ptr->next;
+	}
+	if(foundID == true){
+	cout << id << "[NAME] - [" << name << "] " << "[DateHired] - [" << datehired << "]" << endl;
+	
+	}
+	else{
+		cout << "No information for [" << id << "]" << endl;
+	}
+}
+void HashT:: deleteItem(string id){
+	int index = HashFunction(id);
+	item* delPtr;
+	if(HashTable[index]->id == "empty"){
+		cout << id << " is not in this hash table, try another id" << endl;
+	}
+	else if(HashTable[index]->id == id){
+		delPtr = HashTable[index];
+		HashTable[index] = HashTable[index]->next;
+		delete delPtr;
+		cout << "[" << id << "] has been removed from this hash table" << endl;
+	}
+}
+void HashT:: printTable(){
+	for (int i = 0; i < tableSize; i++){
+		cout << "Index: " << i << endl;
+		cout << HashTable[i]->id << endl;
+		cout << HashTable[i]->name << endl;
+		cout << HashTable[i]->datehired << endl;
+		
+		
+	}
+}
+int main(){
+	
+	HashT hashTable;
+	string addedID;
+	string addedNAME;
+	string addedDATEHIRED;
+	
+	
+	
+	int choice;
+	string fileName;
+	string id;
+	string name;
+	string datehired;
+	
+	
+	
+	vector<string> IDV;
+	vector<string> NAMEV;
+	vector<string> DATEHIREDV;
+	
+	
+	
+	string removedID;
+	string searchedID;
+	int lines;
+	
+	fileName = "DATA_Pilot.CSV";
+	ifstream theFile(fileName);
+	
+	if(theFile.is_open()){
+		//this just grabs the first line and then does nothing with it
+		//so its removing it
+		string line;
+		getline(theFile, line);
+		//10 lines
+		while(!theFile.eof()){
+			if(theFile.eof()) break;
+			else{
+				getline(theFile, id, ',');
+				IDV.push_back(id);
+				getline(theFile, name, ',');
+				NAMEV.push_back(name);
+				getline(theFile, datehired, '\n');
+				DATEHIREDV.push_back(datehired);
+				
+				
+				
+				
+				
+				
+				lines += 1;
+			}
+		}
+		theFile.close();
+	}
+	else{
+		cout << "unable to open file" << endl;
+	}
+	/*
+	for(int i = 0; i < 14; i++){
+		hashTable.addItem(IDV[i], NAMEV[i], DATEHIREDV[i]);
+	}
+	*/
+	/*
+	do{
+		cout << endl;
+		cout << "1 - add ID" << endl;
+		cout << "2 - remove ID" << endl;
+		cout << "3 - search ID" << endl;
+		cout << "4 - print table" << endl;
+		cout << "5 - exit" << endl;
+		cin >> choice;
+		
+		switch(choice){
+			case 1:
+				cout << "[ADD ID]" << endl;
+				cin.ignore();
+				getline(cin,addedID);
+				cout << "[ADD NAME]" << endl;
+				cin.ignore();
+				getline(cin,addedNAME);
+				cout << "[ADD DateHired]" << endl;
+				cin.ignore();
+				getline(cin, addedDATEHIRED);
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				cout << "Added new flight information" << endl;
+				hashTable.addItem(addedID, addedNAME, addedDATEHIRED);
+				break;
+			case 2:
+				cout << "[REMOVE ID]" << endl;
+				cin.ignore();
+				getline(cin, removedID);
+				cout << "id has been removed" << endl;
+				hashTable.deleteItem(removedID);
+				break;
+			case 3:
+				cout << "[SEARCH ID]" << endl;
+				cin.ignore();
+				getline(cin, searchedID);
+				hashTable.searchItem(searchedID);
+				break;
+			case 4:
+				cout << "[PRINT TABLE]" << endl;
+				hashTable.printTable();
+				break;
+			case 5:
+				cout << "[EXIT]" << endl;
+			default:
+				cout << "[INVALID INPUT]" << endl;
+				break;
+		}
+	}while(choice != 5);
+	*/
+	
+	cout << "File Name: sample_data/" << fileName << endl;
+	cout << "Insert Content: ['ID', 'NAME', 'DATEHIRED']" << endl;
+	cout << "id" << " " << "name" << " " << "date hired" << endl;
+	for(int i = 0; i < 8; i++){
+		hashTable.addItem(IDV[i], NAMEV[i], DATEHIREDV[i]);
+		cout << IDV[i] << " " << NAMEV[i] << " " << DATEHIREDV[i] << endl;
+	}
+	
+	
+	return 0;
+}
